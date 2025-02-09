@@ -10,6 +10,8 @@ TempoDevtools.init();
 
 const basename = import.meta.env.BASE_URL;
 
+console.log("Starting application...");
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
@@ -19,3 +21,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </ThemeProvider>
   </React.StrictMode>,
 );
+
+console.log("Application started.");

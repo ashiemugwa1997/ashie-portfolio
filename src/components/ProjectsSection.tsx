@@ -26,7 +26,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       title: "UZ Research Week Android App",
       description:
         "Developed the University of Zimbabwe 2021 Research Week Android application with an integrated voting platform using Django Rest Framework.",
-      imageUrl: "/ashley.jpg",
+      imageUrl: "https://via.placeholder.com/300x200.png?text=UZ+Research+Week+Android+App",
       technologies: ["Django", "Android", "REST API"],
       details:
         "Led the development of a comprehensive voting and research showcase platform for the University of Zimbabwe's 2021 Research Week. The application featured real-time voting capabilities, research paper submissions, and interactive presentation schedules.",
@@ -38,7 +38,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       title: "ZETDC Loadshedding System",
       description:
         "Designed and developed a comprehensive loadshedding system with both web (Django) and mobile (React Native) applications, integrated with real-time API data.",
-      imageUrl: "/ashley.jpg",
+      imageUrl: "https://via.placeholder.com/300x200.png?text=ZETDC+Loadshedding+System",
       technologies: ["Django", "React Native", "REST API"],
       details:
         "Created an integrated solution for managing and communicating power outage schedules. The system includes a web dashboard for administrators and a mobile app for public users, featuring real-time updates and location-based notifications.",
@@ -50,7 +50,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       title: "Zvipfuwo Online Livestock Market",
       description:
         "Led the development of an award-nominated online livestock marketplace at the University of Zimbabwe research week 2021.",
-      imageUrl: "/ashley.jpg",
+      imageUrl: "https://via.placeholder.com/300x200.png?text=Zvipfuwo+Online+Livestock+Market",
       technologies: ["Django", "React", "PostgreSQL"],
       details:
         "Developed a digital marketplace connecting livestock farmers with buyers, featuring real-time pricing, quality verification, and secure transaction processing. The platform was nominated for innovation awards at UZ Research Week 2021.",
@@ -68,6 +68,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
+      console.log("Projects loaded.");
     }, 1500);
 
     return () => clearTimeout(timer);
@@ -93,8 +94,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     setIsFilterLoading("");
 
     // Simulate content loading
-    setTimeout(() => setIsLoading(false), 300);
+    setTimeout(() => {
+      setIsLoading(false);
+      console.log(`Filter changed to ${newFilter}.`);
+    }, 300);
   };
+
+  console.log("Rendering ProjectsSection component...");
 
   return (
     <section className="py-16 px-4 bg-blue-50">
@@ -136,7 +142,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                   description={project.description}
                   imageUrl={project.imageUrl}
                   technologies={project.technologies}
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => {
+                    setSelectedProject(project);
+                    console.log(`Project selected: ${project.title}`);
+                  }}
                 />
               ))}
         </div>
@@ -145,7 +154,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         {selectedProject && (
           <ProjectModal
             isOpen={!!selectedProject}
-            onClose={() => setSelectedProject(null)}
+            onClose={() => {
+              setSelectedProject(null);
+              console.log("Project modal closed.");
+            }}
             project={{
               title: selectedProject.title,
               description: selectedProject.description,

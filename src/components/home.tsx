@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import Navigation from "./Navigation";
-import HeroSection from "./HeroSection";
-import SkillsSection from "./SkillsSection";
 import ProjectsSection from "./ProjectsSection";
 import ContactSection from "./ContactSection";
+import AITool from "./AITool";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 const Home = () => {
@@ -32,16 +31,6 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="pt-20">
-        {/* Hero Section */}
-        <section id="hero">
-          <HeroSection />
-        </section>
-
-        {/* Skills Section */}
-        <section id="skills">
-          <SkillsSection />
-        </section>
-
         {/* Projects Section */}
         <section id="projects">
           <ProjectsSection />
@@ -50,6 +39,11 @@ const Home = () => {
         {/* Contact Section */}
         <section id="contact">
           <ContactSection />
+        </section>
+
+        {/* AI Tool Section */}
+        <section id="ai-tool" className="py-10">
+          <AITool />
         </section>
       </main>
 

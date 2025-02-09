@@ -13,19 +13,19 @@ import { Eye } from "lucide-react";
 import { Image } from "./ui/image";
 
 interface ProjectCardProps {
-  title?: string;
-  description?: string;
-  imageUrl?: string;
-  technologies?: string[];
-  onClick?: () => void;
+  title: string;
+  description: string;
+  imageUrl: string;
+  technologies: string[];
+  onClick: () => void;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
-  title = "Project Title",
-  description = "A brief description of the project and its key features. This showcases the main highlights and achievements.",
-  imageUrl = "/ashley.jpg",
-  technologies = ["React", "TypeScript", "Tailwind"],
-  onClick = () => console.log("Project card clicked"),
+  title,
+  description,
+  imageUrl,
+  technologies,
+  onClick,
 }) => {
   return (
     <Card className="w-[350px] h-[400px] bg-white overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -34,7 +34,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           src={imageUrl}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          fallback="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1074&auto=format&fit=crop"
+          fallback="https://via.placeholder.com/300x200.png?text=Image+Not+Available"
           fallbackClassName="w-full h-full bg-gray-100"
         />
       </div>

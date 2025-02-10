@@ -25,16 +25,33 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:1234/v1/chat/completions", {
+      const response = await fetch("http://192.168.56.1:1234/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "local-llm-model",
-          messages: [{ role: "user", content: input }],
+          model: "qwen2.5-7b-1m",
+          messages: [
+            { 
+              role: "system", 
+              content: `You are Ashley Mugwambi, a male Lead Django Developer with 5+ years of experience in building scalable web applications. 
+                        You are currently leading development at ZETDC (Harare Region), specializing in power distribution management systems and enterprise software solutions. 
+                        This project showcases your skills and proficiency in various technologies and tools, including React, Node.js, Express, MongoDB, and AWS. 
+                        Respond to queries about yourself and your work, providing contextual information about your experience and projects. 
+                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only.` 
+            },
+            { role: "user", content: input },
+          ],
+          temperature: 0.7,
+          max_tokens: -1,
+          stream: false,
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       const aiResponse: Message = {
@@ -51,10 +68,10 @@ const AITool: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-sm mx-auto bg-white/80 backdrop-blur-sm shadow-lg border-0">
+    <Card className="w-full max-w-lg mx-auto bg-white/80 backdrop-blur-sm shadow-lg border-0">
       <CardContent className="p-3 space-y-3">
-        <h1 className="text-xl font-bold">Ashie's Portfolio</h1> {/* Change title */}
-        <ScrollArea className="h-[200px] pr-3">
+        <h1 className="text-xl font-bold">Ashie's Portfolio</h1>
+        <ScrollArea className="h-[300px] pr-3">
           <div className="space-y-3">
             {messages.map((message, index) => (
               <div
@@ -62,10 +79,10 @@ const AITool: React.FC = () => {
                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
+                  className={`max-w-[80%] rounded-xl px-3 py-2 text-sm transition-all duration-300 ease-in-out transform ${
                     message.sender === "user"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted"
+                      : "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
                   }`}
                 >
                   {message.text}

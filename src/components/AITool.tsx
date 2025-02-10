@@ -25,7 +25,7 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      // Send message directly to the API endpoint
+      // Directly use the API endpoint URL
       const response = await fetch("https://36d5-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -63,6 +63,7 @@ const AITool: React.FC = () => {
       setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
       console.error("Error:", error);
+      setMessages((prev) => [...prev, { sender: "ai", text: "Failed to fetch response. Please try again later." }]);
     } finally {
       setLoading(false);
     }

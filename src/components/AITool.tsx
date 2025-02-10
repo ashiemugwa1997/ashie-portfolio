@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import { Send } from "lucide-react";
+import { Spinner } from "./ui/spinner"; // Import Spinner component
 
 interface Message {
   sender: "user" | "ai";
@@ -76,14 +77,8 @@ const AITool: React.FC = () => {
               </div>
             ))}
             {loading && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] rounded-xl px-3 py-2 bg-muted">
-                  <div className="flex space-x-1">
-                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" />
-                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:0.2s]" />
-                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:0.4s]" />
-                  </div>
-                </div>
+              <div className="flex justify-center">
+                <Spinner /> {/* Add Spinner component */}
               </div>
             )}
           </div>

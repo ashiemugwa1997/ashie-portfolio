@@ -57,6 +57,7 @@ const AITool: React.FC = () => {
   return (
     <Card className="w-full max-w-sm mx-auto bg-white/80 backdrop-blur-sm shadow-lg border-0">
       <CardContent className="p-3 space-y-3">
+        <h1 className="text-xl font-bold">Ashie's Portfolio</h1> {/* Change title */}
         <ScrollArea className="h-[200px] pr-3">
           <div className="space-y-3">
             {messages.map((message, index) => (

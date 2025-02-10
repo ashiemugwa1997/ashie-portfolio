@@ -25,7 +25,7 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.56.1:1234/v1/chat/completions", {
+      const response = await fetch("https://8b0d-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

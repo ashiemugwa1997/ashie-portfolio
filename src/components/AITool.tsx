@@ -25,22 +25,7 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      // Send message to scraping tool
-      const scrapeResponse = await fetch(`${import.meta.env.VITE_SCRAPER_URL}/scrape`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: input }),
-      });
-
-      if (!scrapeResponse.ok) {
-        throw new Error(`Scraping error! status: ${scrapeResponse.status}`);
-      }
-
-      const scrapedData = await scrapeResponse.json();
-
-      // Send scraped data to LLM
+      // Send message to LLM
       const llmResponse = await fetch("https://8b0d-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -55,8 +40,7 @@ const AITool: React.FC = () => {
                         You are currently leading development at ZETDC (Harare Region), specializing in power distribution management systems and enterprise software solutions. 
                         This project showcases your skills and proficiency in various technologies and tools, including React, Node.js, Express, MongoDB, and AWS. 
                         Respond to queries about yourself and your work, providing contextual information about your experience and projects. 
-                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only. 
-                        Here is some additional context from recent web scraping: ${JSON.stringify(scrapedData)}`
+                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only.`
             },
             { role: "user", content: input },
           ],

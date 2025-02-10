@@ -63,7 +63,13 @@ const AITool: React.FC = () => {
       setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
       console.error("Error:", error);
-      setMessages((prev) => [...prev, { sender: "ai", text: "Failed to fetch response. Please try again later." }]);
+      let errorMessage = "Failed to fetch response. Please try again later.";
+      if (error.message.includes("Failed to fetch")) {
+        errorMessage = "Network error. Please check your internet connection.";
+      } else if (error.message.includes("API error")) {
+        errorMessage = "Server error. Please try again later.";
+      }
+      setMessages((prev) => [...prev, { sender: "ai", text: errorMessage }]);
     } finally {
       setLoading(false);
     }

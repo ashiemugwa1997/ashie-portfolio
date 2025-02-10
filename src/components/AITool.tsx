@@ -23,25 +23,24 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log("Sending request to DeepSeek API...");
-      const response = await fetch("https://api.deepseek.com/chat/completions", {
+      console.log("Sending request to OpenAI API...");
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
+          model: "gpt-4o-mini",
+          store: true,
           messages: [
-            { role: "system", content: "You are a helpful assistant." },
             { role: "user", content: input },
           ],
-          stream: false,
         }),
       });
 
       const data = await response.json();
-      console.log("Received response from DeepSeek API:", data);
+      console.log("Received response from OpenAI API:", data);
       const aiResponse: Message = {
         sender: "ai",
         text: data.choices[0].message.content.trim(),

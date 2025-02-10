@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Navigation from "./Navigation";
+import AboutSection from "./AboutSection";
 import ProjectsSection from "./ProjectsSection";
 import ContactSection from "./ContactSection";
 import AITool from "./AITool";
@@ -31,6 +32,10 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="pt-20">
+        {/* About Section */}
+        <section id="about">
+          <AboutSection />
+        </section>
         {/* Projects Section */}
         <section id="projects">
           <ProjectsSection />

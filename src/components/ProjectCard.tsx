@@ -13,19 +13,19 @@ import { Eye } from "lucide-react";
 import { Image } from "./ui/image";
 
 interface ProjectCardProps {
-  title: string;
-  description: string;
-  imageUrl: string;
-  technologies: string[];
-  onClick: () => void;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  technologies?: string[];
+  onClick?: () => void;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
-  title,
-  description,
-  imageUrl,
-  technologies,
-  onClick,
+  title = "Project Title",
+  description = "Project Description",
+  imageUrl = "https://images.unsplash.com/photo-1545239351-1141bd82e8a6",
+  technologies = ["React", "TypeScript"],
+  onClick = () => {},
 }) => {
   return (
     <Card className="w-[350px] h-[400px] bg-white overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -50,11 +50,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <CardContent>
         <div className="flex flex-wrap gap-2">
-          {technologies.map((tech, index) => (
+          {technologies?.map((tech, index) => (
             <Badge key={index} variant="secondary" className="bg-gray-100">
               {tech}
             </Badge>
-          ))}
+          )) || null}
         </div>
       </CardContent>
 

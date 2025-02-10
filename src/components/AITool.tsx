@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { ScrollArea } from "./ui/scroll-area";
+import { Send } from "lucide-react";
 
 interface Message {
   sender: "user" | "ai";
@@ -10,83 +15,93 @@ const AITool: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleButtonClick = async () => {
-    if (input.trim() === "") return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() === "" || loading) return;
 
     const userMessage: Message = { sender: "user", text: input };
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
     try {
-      console.log("Sending request to OpenAI API...");
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4",
+            messages: [{ role: "user", content: input }],
+          }),
         },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          store: true,
-          messages: [
-            { role: "user", content: input },
-          ],
-        }),
-      });
+      );
 
       const data = await response.json();
-      console.log("Received response from OpenAI API:", data);
       const aiResponse: Message = {
         sender: "ai",
         text: data.choices[0].message.content.trim(),
       };
 
-      setMessages((prevMessages) => [...prevMessages, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
-      console.error("Error fetching AI response:", error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Interactive AI Tool</h2>
-      <div className="mb-4 h-40 overflow-y-auto bg-gray-100 p-2 rounded">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`p-2 my-2 rounded ${
-              message.sender === "user"
-                ? "bg-blue-500 text-white self-end"
-                : "bg-gray-300 text-black self-start"
-            }`}
-          >
-            {message.text}
+    <Card className="w-full max-w-sm mx-auto bg-white/80 backdrop-blur-sm shadow-lg border-0">
+      <CardContent className="p-3 space-y-3">
+        <ScrollArea className="h-[200px] pr-3">
+          <div className="space-y-3">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
+                    message.sender === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] rounded-xl px-3 py-2 bg-muted">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:0.2s]" />
+                    <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:0.4s]" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-      <input
-        type="text"
-        value={input}
-        onChange={handleInputChange}
-        className="w-full p-2 border border-gray-300 rounded mb-4"
-        placeholder="Ask me anything..."
-        disabled={loading}
-      />
-      <button
-        onClick={handleButtonClick}
-        className="w-full bg-blue-500 text-white p-2 rounded"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Ask AI"}
-      </button>
-    </div>
+        </ScrollArea>
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask me anything..."
+            className="flex-1 text-sm"
+            disabled={loading}
+          />
+          <Button type="submit" size="icon" variant="ghost" disabled={loading}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -29,6 +29,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     email: "mailto:ashleyzarter@gmail.com",
   },
 }) => {
+  const [socialLoading, setSocialLoading] = React.useState<string>("");
+
+  const handleSocialClick = async (type: string, url: string) => {
+    setSocialLoading(type);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error(`Error opening ${type} link:`, error);
+    } finally {
+      setSocialLoading("");
+    }
+  };
+
   return (
     <section className="min-h-screen w-full bg-background flex flex-col justify-center items-center px-4 relative">
       <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8 items-center">
@@ -55,22 +69,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </Button>
 
             <div className="flex gap-4">
-              {socialLinks.github && (
+              {socialLinks?.github && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => window.open(socialLinks.github, "_blank")}
+                  onClick={() =>
+                    handleSocialClick("github", socialLinks.github)
+                  }
+                  disabled={socialLoading === "github"}
                 >
-                  <Github className="w-5 h-5" />
+                  <Github
+                    className={`w-5 h-5 ${socialLoading === "github" ? "animate-spin" : ""}`}
+                  />
                 </Button>
               )}
-              {socialLinks.linkedin && (
+              {socialLinks?.linkedin && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => window.open(socialLinks.linkedin, "_blank")}
+                  onClick={() =>
+                    handleSocialClick("linkedin", socialLinks.linkedin)
+                  }
+                  disabled={socialLoading === "linkedin"}
                 >
-                  <Linkedin className="w-5 h-5" />
+                  <Linkedin
+                    className={`w-5 h-5 ${socialLoading === "linkedin" ? "animate-spin" : ""}`}
+                  />
                 </Button>
               )}
             </div>

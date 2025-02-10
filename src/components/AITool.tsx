@@ -25,7 +25,8 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://8b0d-41-79-188-114.ngrok-free.app/v1/chat/completions", {
+      // Send message directly to the API endpoint
+      const response = await fetch("https://36d5-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +40,7 @@ const AITool: React.FC = () => {
                         You are currently leading development at ZETDC (Harare Region), specializing in power distribution management systems and enterprise software solutions. 
                         This project showcases your skills and proficiency in various technologies and tools, including React, Node.js, Express, MongoDB, and AWS. 
                         Respond to queries about yourself and your work, providing contextual information about your experience and projects. 
-                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only.` 
+                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only.`
             },
             { role: "user", content: input },
           ],
@@ -50,7 +51,7 @@ const AITool: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`API error! status: ${response.status}`);
       }
 
       const data = await response.json();

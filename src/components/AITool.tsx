@@ -25,7 +25,7 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      // Revert the mode change and handle CORS on the server side
+      // Directly call the API endpoint
       const response = await fetch("https://36d5-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {

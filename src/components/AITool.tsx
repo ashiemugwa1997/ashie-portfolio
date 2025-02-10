@@ -25,7 +25,23 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://8b0d-41-79-188-114.ngrok-free.app/v1/chat/completions", {
+      // Send message to scraping tool
+      const scrapeResponse = await fetch("/scrape", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: input }),
+      });
+
+      if (!scrapeResponse.ok) {
+        throw new Error(`Scraping error! status: ${scrapeResponse.status}`);
+      }
+
+      const scrapedData = await scrapeResponse.json();
+
+      // Send scraped data to LLM
+      const llmResponse = await fetch("https://8b0d-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +55,8 @@ const AITool: React.FC = () => {
                         You are currently leading development at ZETDC (Harare Region), specializing in power distribution management systems and enterprise software solutions. 
                         This project showcases your skills and proficiency in various technologies and tools, including React, Node.js, Express, MongoDB, and AWS. 
                         Respond to queries about yourself and your work, providing contextual information about your experience and projects. 
-                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only.` 
+                        If you are unsure about an answer, search the web for the best possible information, particularly highlighting great things only. 
+                        Here is some additional context from recent web scraping: ${JSON.stringify(scrapedData)}`
             },
             { role: "user", content: input },
           ],
@@ -49,14 +66,14 @@ const AITool: React.FC = () => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!llmResponse.ok) {
+        throw new Error(`LLM error! status: ${llmResponse.status}`);
       }
 
-      const data = await response.json();
+      const llmData = await llmResponse.json();
       const aiResponse: Message = {
         sender: "ai",
-        text: data.choices[0].message.content.trim(),
+        text: llmData.choices[0].message.content.trim(),
       };
 
       setMessages((prev) => [...prev, aiResponse]);

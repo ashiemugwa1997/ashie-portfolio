@@ -26,7 +26,7 @@ const AITool: React.FC = () => {
 
     try {
       // Send message to scraping tool
-      const scrapeResponse = await fetch("/scrape", {
+      const scrapeResponse = await fetch(`${import.meta.env.VITE_SCRAPER_URL}/scrape`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

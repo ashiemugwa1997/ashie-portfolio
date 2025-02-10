@@ -16,12 +16,13 @@ app.post('/scrape', async (req, res) => {
   try {
     // Launch the browser
     const browser = await puppeteer.launch({
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
 
     // Navigate to Google
-    await page.goto('https://www.google.com');
+    await page.goto('https://www.google.com', { waitUntil: 'networkidle2' });
 
     // Perform a search
     await page.type('input[name="q"]', query);

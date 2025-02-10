@@ -25,10 +25,9 @@ const AITool: React.FC = () => {
     setLoading(true);
 
     try {
-      // Set the request's mode to 'no-cors'
+      // Revert the mode change and handle CORS on the server side
       const response = await fetch("https://36d5-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },

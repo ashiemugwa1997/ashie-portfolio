@@ -26,7 +26,7 @@ const AITool: React.FC = () => {
 
     try {
       // Directly call the API endpoint
-      const response = await fetch("https://36d5-41-79-188-114.ngrok-free.app/v1/chat/completions", {
+      const response = await fetch("https://25fe-41-79-188-114.ngrok-free.app/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

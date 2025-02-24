@@ -66,7 +66,7 @@ export const Base = {
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuSeparator />
           <ContextMenuRadioItem value="pedro">
-            Pedro Duarte
+            Ashley Mugwambi
           </ContextMenuRadioItem>
           <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
         </ContextMenuRadioGroup>

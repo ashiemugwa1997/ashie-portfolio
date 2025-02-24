@@ -4,6 +4,8 @@ import Home from "./components/home";
 import routes from "tempo-routes";
 
 function App() {
+  console.log("Routes:", routes);
+  console.log("Env:", import.meta.env);
   console.log("Rendering App component...");
 
   return (

@@ -61,6 +61,19 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       liveUrl: "https://example.com",
       githubUrl: "https://github.com/example",
     },
+    {
+      id: 4,
+      title: "ZESA Drone School Management",
+      description:
+        "Developed a comprehensive drone training school management system for ZESA Holdings, facilitating student registration, course management, and certification tracking.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=500&h=300&fit=crop",
+      technologies: ["Django", "PostgreSQL", "React", "Docker"],
+      details:
+        "Built a sophisticated drone training management platform for ZESA Holdings that streamlines the entire training process. Features include student enrollment management, course scheduling, progress tracking, certification management, and detailed reporting. The system integrates with existing ZESA infrastructure and complies with local aviation regulations.",
+      liveUrl: "https://example.com",
+      githubUrl: "https://github.com/example",
+    },
   ],
 }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);

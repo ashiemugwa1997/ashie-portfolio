@@ -1,17 +1,18 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AITool from "./AITool";
+import * as geminiApi from "../utils/geminiApi";
 
 describe("AITool", () => {
   beforeEach(() => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ text: "React is a JavaScript library for building user interfaces." }],
-          }),
-      })
-    ) as jest.Mock;
+    // Mock the askGemini function instead of fetch
+    jest.spyOn(geminiApi, 'askGemini').mockResolvedValue({
+      candidates: [{ 
+        content: { 
+          parts: [{ text: "React is a JavaScript library for building user interfaces." }] 
+        } 
+      }]
+    });
   });
 
   afterEach(() => {

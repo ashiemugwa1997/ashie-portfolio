@@ -4,7 +4,6 @@ import ProjectModal from "./ProjectModal";
 import ProjectCardSkeleton from "./ProjectCardSkeleton";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "./ThemeProvider";
 
 interface Project {
   id: number;
@@ -81,58 +80,149 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const [filter, setFilter] = useState<string>("all");
   const [isFilterLoading, setIsFilterLoading] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
-  const { theme } = useTheme();
+  const [visibleProjects, setVisibleProjects] = useState<Project[]>([]);
+  const [inViewProjects, setInViewProjects] = useState<{[key: number]: boolean}>({});
 
-  useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      console.log("Projects loaded.");
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const technologies = Array.from(
-    new Set(projects.flatMap((project) => project.technologies)),
+  // Calculate all unique technologies once on component mount
+  const technologies = React.useMemo(() => 
+    Array.from(new Set(projects.flatMap((project) => project.technologies))),
+    [projects]
   );
 
-  const filteredProjects =
+  // Filter projects based on selected technology
+  const filteredProjects = React.useMemo(() => 
     filter === "all"
       ? projects
-      : projects.filter((project) => project.technologies.includes(filter));
+      : projects.filter((project) => project.technologies.includes(filter)),
+    [filter, projects]
+  );
+
+  // Create an intersection observer to track which projects are in viewport
+  useEffect(() => {
+    // Only set up if not loading and we have projects to show
+    if (!isLoading && visibleProjects.length) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            const projectId = parseInt(entry.target.getAttribute('data-project-id') || "0", 10);
+            if (projectId) {
+              setInViewProjects(prev => ({
+                ...prev,
+                [projectId]: entry.isIntersecting
+              }));
+            }
+          });
+        },
+        {
+          rootMargin: '100px',
+          threshold: 0.1
+        }
+      );
+
+      // Find all project elements and observe them
+      const projectElements = document.querySelectorAll('[data-project-id]');
+      projectElements.forEach(element => observer.observe(element));
+
+      return () => observer.disconnect();
+    }
+  }, [isLoading, visibleProjects]);
+
+  // Handle initial loading simulation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      
+      // Prioritize visible projects in batches for better rendering performance
+      if (filteredProjects.length > 0) {
+        // First, show only the first 2 critical projects
+        const firstBatch = filteredProjects.slice(0, 2); 
+        setVisibleProjects(firstBatch);
+        
+        // Then sequentially load the next batches
+        if (filteredProjects.length > 2) {
+          setTimeout(() => {
+            setVisibleProjects(prev => [
+              ...prev, 
+              ...filteredProjects.slice(2, 4)
+            ]);
+            
+            // And finally load the rest if any
+            if (filteredProjects.length > 4) {
+              setTimeout(() => {
+                setVisibleProjects(filteredProjects);
+              }, 200);
+            }
+          }, 100);
+        }
+      }
+      
+      console.log("Projects loaded.");
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [filteredProjects]);
 
   const handleFilterChange = async (newFilter: string) => {
     setIsFilterLoading(newFilter);
     setIsLoading(true);
+    setVisibleProjects([]);
+    setInViewProjects({});
 
-    // Simulate loading delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Simulate loading delay - reduced for better UX
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     setFilter(newFilter);
     setIsFilterLoading("");
 
-    // Simulate content loading
+    // Get the new filtered projects
+    const newFilteredProjects = newFilter === "all"
+      ? projects
+      : projects.filter((project) => project.technologies.includes(newFilter));
+
+    // Simulate content loading with progressive rendering
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Load progressively for better performance
+      const firstBatch = newFilteredProjects.slice(0, 2);
+      setVisibleProjects(firstBatch);
+      
+      // Load the rest in batches
+      if (newFilteredProjects.length > 2) {
+        setTimeout(() => {
+          setVisibleProjects(prev => [
+            ...prev, 
+            ...newFilteredProjects.slice(2, Math.min(4, newFilteredProjects.length))
+          ]);
+          
+          if (newFilteredProjects.length > 4) {
+            setTimeout(() => {
+              setVisibleProjects(newFilteredProjects);
+            }, 200);
+          }
+        }, 100);
+      }
+      
       console.log(`Filter changed to ${newFilter}.`);
-    }, 300);
+    }, 200);
   };
 
-  // Calculate background color based on theme
-  const sectionBgColor = theme === "dark" 
-    ? "bg-gray-900" 
-    : "bg-blue-50";
+  // Preload selected project images as user hovers
+  const preloadProjectImage = (projectId: number) => {
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+      const img = new Image();
+      img.src = project.imageUrl;
+    }
+  };
 
   return (
-    <section className={`py-16 px-4 ${sectionBgColor} transition-colors duration-300`}>
+    <section className="py-16 px-4 bg-blue-50">
       <div className="container mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`text-3xl font-bold text-center mb-8 ${
-            theme === "dark" ? "text-white" : ""
-          }`}
+          className="text-3xl font-bold text-center mb-8"
         >
           My Projects
         </motion.h2>
@@ -148,7 +238,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             variant={filter === "all" ? "default" : "outline"}
             onClick={() => handleFilterChange("all")}
             disabled={isFilterLoading === "all"}
-            className={theme === "dark" && filter !== "all" ? "border-gray-600 text-gray-300" : ""}
           >
             {isFilterLoading === "all" ? "Loading..." : "All"}
           </Button>
@@ -158,7 +247,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               variant={filter === tech ? "default" : "outline"}
               onClick={() => handleFilterChange(tech)}
               disabled={isFilterLoading === tech}
-              className={theme === "dark" && filter !== tech ? "border-gray-600 text-gray-300" : ""}
             >
               {isFilterLoading === tech ? "Loading..." : tech}
             </Button>
@@ -171,7 +259,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             {isLoading ? (
               // Show skeleton cards while loading
               <>
-                {Array(3)
+                {Array(Math.min(3, filteredProjects.length || 3))
                   .fill(0)
                   .map((_, index) => (
                     <motion.div
@@ -181,24 +269,26 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                      <ProjectCardSkeleton isDarkMode={theme === "dark"} />
+                      <ProjectCardSkeleton />
                     </motion.div>
                   ))}
               </>
             ) : (
               <>
-                {filteredProjects.map((project, index) => (
+                {visibleProjects.map((project, index) => (
                   <motion.div
                     key={project.id}
+                    data-project-id={project.id}
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{
                       duration: 0.3,
-                      delay: index * 0.1,
+                      delay: Math.min(index * 0.1, 0.3), // Cap delay for better performance
                       layout: { duration: 0.3 },
                     }}
+                    onMouseEnter={() => preloadProjectImage(project.id)}
                   >
                     <ProjectCard
                       title={project.title}
@@ -209,7 +299,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         setSelectedProject(project);
                         console.log(`Project selected: ${project.title}`);
                       }}
-                      priority={index < 2} // Prioritize first two projects
+                      priority={index < 2} // Prioritize loading for first two projects
                     />
                   </motion.div>
                 ))}

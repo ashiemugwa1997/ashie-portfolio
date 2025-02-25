@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, ExternalLink, Github } from "lucide-react";
 import { Image } from "./ui/image";
+import { useTheme } from "./ThemeProvider";
 
 interface ProjectModalProps {
   isOpen?: boolean;
@@ -40,7 +41,9 @@ const ProjectModal = ({
       "This is a detailed description of the project including its features, challenges, and solutions.",
   },
 }: ProjectModalProps) => {
-  const [isLoading, setIsLoading] = React.useState<string>("");
+  const [isLoading, setIsLoading] = useState<string>("");
+  const [imagePreloaded, setImagePreloaded] = useState(false);
+  const { theme } = useTheme();
 
   // Generate low quality placeholder for modal images
   const generateLowQualityUrl = (url: string) => {
@@ -58,6 +61,16 @@ const ProjectModal = ({
     }
   };
 
+  // Preload the full-size image when modal opens
+  useEffect(() => {
+    if (isOpen && project.image) {
+      const img = new Image();
+      img.src = project.image;
+      img.onload = () => setImagePreloaded(true);
+    }
+    return () => setImagePreloaded(false);
+  }, [isOpen, project.image]);
+
   const handleButtonClick = async (type: string, url: string) => {
     setIsLoading(type);
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -67,17 +80,27 @@ const ProjectModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl bg-white">
+      <DialogContent className={`max-w-4xl ${
+        theme === 'dark'
+          ? 'bg-gray-900 border-gray-700 text-gray-100'
+          : 'bg-white text-gray-900'
+      }`}>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl font-bold">
+            <DialogTitle className={`text-2xl font-bold ${
+              theme === 'dark' ? 'text-white' : ''
+            }`}>
               {project.title}
             </DialogTitle>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-6 w-6 rounded-full"
+              className={`h-6 w-6 rounded-full ${
+                theme === 'dark'
+                  ? 'hover:bg-gray-800 text-gray-300'
+                  : ''
+              }`}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -90,22 +113,37 @@ const ProjectModal = ({
             alt={project.title}
             className="w-full h-[300px] object-cover rounded-lg"
             fallback="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1074&auto=format&fit=crop"
-            fallbackClassName="w-full h-[300px] bg-gray-100 rounded-lg"
+            fallbackClassName={`w-full h-[300px] rounded-lg ${
+              theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+            }`}
             lowQualityPlaceholder={generateLowQualityUrl(project.image)}
-            loading="eager" // Load this image immediately as it's the main content of an opened modal
-            decoding="async"
+            loading="eager"
+            fetchPriority="high"
+            priority={true}
           />
         </div>
 
-        <DialogDescription className="mt-4 text-lg text-gray-700">
+        <DialogDescription className={`mt-4 text-lg ${
+          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+        }`}>
           {project.description}
         </DialogDescription>
 
         <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Technologies Used</h3>
+          <h3 className={`text-lg font-semibold mb-2 ${
+            theme === 'dark' ? 'text-white' : ''
+          }`}>
+            Technologies Used
+          </h3>
           <div className="flex flex-wrap gap-2">
             {project.technologies.map((tech, index) => (
-              <Badge key={index} variant="secondary">
+              <Badge 
+                key={index} 
+                variant="secondary"
+                className={theme === 'dark' 
+                  ? 'bg-gray-700 text-gray-200' 
+                  : ''}
+              >
                 {tech}
               </Badge>
             ))}
@@ -113,14 +151,24 @@ const ProjectModal = ({
         </div>
 
         <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Project Details</h3>
-          <p className="text-gray-700">{project.details}</p>
+          <h3 className={`text-lg font-semibold mb-2 ${
+            theme === 'dark' ? 'text-white' : ''
+          }`}>
+            Project Details
+          </h3>
+          <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+            {project.details}
+          </p>
         </div>
 
         <div className="mt-6 flex gap-4">
           {project.liveUrl && (
             <Button
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${
+                theme === 'dark'
+                  ? 'bg-blue-700 hover:bg-blue-800'
+                  : ''
+              }`}
               onClick={() => handleButtonClick("live", project.liveUrl!)}
               disabled={isLoading === "live"}
             >
@@ -131,7 +179,11 @@ const ProjectModal = ({
           {project.githubUrl && (
             <Button
               variant="outline"
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${
+                theme === 'dark'
+                  ? 'border-gray-600 text-gray-200 hover:bg-gray-800 hover:text-gray-100'
+                  : ''
+              }`}
               onClick={() => handleButtonClick("github", project.githubUrl!)}
               disabled={isLoading === "github"}
             >

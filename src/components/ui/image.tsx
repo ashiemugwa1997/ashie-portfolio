@@ -6,6 +6,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
   fallbackClassName?: string;
   lowQualityPlaceholder?: string;
+  priority?: boolean; // Add priority flag
 }
 
 const Image = ({
@@ -15,14 +16,26 @@ const Image = ({
   fallback = "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1074&auto=format&fit=crop",
   fallbackClassName,
   lowQualityPlaceholder,
+  loading: propLoading,
+  fetchPriority: propFetchPriority,
+  priority = false, // Default to non-priority
   ...props
 }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  
+  // Determine if we should use the IntersectionObserver or load immediately
+  const shouldLazyLoad = !priority && propLoading !== "eager";
 
   useEffect(() => {
+    // If priority is set, mark as in view immediately
+    if (priority || propLoading === "eager") {
+      setIsInView(true);
+      return;
+    }
+    
     // Set up intersection observer for lazy loading
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +46,7 @@ const Image = ({
         }
       },
       {
-        rootMargin: "200px 0px", // 200px "threshold" - starts loading 200px before it's visible
+        rootMargin: priority ? "0px" : "200px 0px", // Smaller threshold for priority images
         threshold: 0.01,
       }
     );
@@ -43,9 +56,9 @@ const Image = ({
     }
 
     return () => {
-      if (imgRef.current) observer.unobserve(imgRef.current);
+      if (imgRef.current && observer) observer.unobserve(imgRef.current);
     };
-  }, []);
+  }, [priority, propLoading]);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -69,6 +82,12 @@ const Image = ({
     );
   }
 
+  // Determine optimal loading attribute value
+  const loadingAttribute = propLoading || (priority ? "eager" : "lazy");
+  
+  // Determine optimal fetch priority
+  const fetchPriority = propFetchPriority || (priority ? "high" : "auto");
+
   return (
     <div className="relative overflow-hidden">
       {isLoading && (
@@ -89,14 +108,15 @@ const Image = ({
       
       <img
         ref={imgRef}
-        src={isInView ? (src || fallback) : "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="}
+        src={isInView || priority ? (src || fallback) : "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="}
         data-src={src || fallback}
         alt={alt}
         className={cn(className, isLoading && "opacity-0 transition-opacity duration-300")}
         onLoad={handleLoad}
         onError={handleError}
-        loading="lazy"
-        decoding="async"
+        loading={loadingAttribute}
+        decoding={priority ? "sync" : "async"}
+        fetchPriority={fetchPriority}
         {...props}
       />
     </div>

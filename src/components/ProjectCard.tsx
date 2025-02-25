@@ -27,6 +27,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   technologies = ["React", "TypeScript"],
   onClick = () => {},
 }) => {
+  // Create a low-quality placeholder URL from the original
+  const generateLowQualityUrl = (url: string) => {
+    if (!url) return "";
+    
+    try {
+      const urlObj = new URL(url);
+      // For Unsplash images, we can use their built-in transformation parameters
+      if (urlObj.hostname.includes('unsplash.com')) {
+        return `${url}&w=20&blur=10`;
+      }
+      return url; // Return original if we can't optimize
+    } catch (e) {
+      return url; // Return original on any error
+    }
+  };
+  
+  const lowQualityUrl = generateLowQualityUrl(imageUrl);
+
   return (
     <Card className="w-[350px] h-[400px] bg-white overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-48 overflow-hidden">
@@ -36,6 +54,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           fallback="https://via.placeholder.com/300x200.png?text=Image+Not+Available"
           fallbackClassName="w-full h-full bg-gray-100"
+          lowQualityPlaceholder={lowQualityUrl}
+          loading="lazy"
+          decoding="async"
         />
       </div>
 

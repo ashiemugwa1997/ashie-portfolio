@@ -42,6 +42,22 @@ const ProjectModal = ({
 }: ProjectModalProps) => {
   const [isLoading, setIsLoading] = React.useState<string>("");
 
+  // Generate low quality placeholder for modal images
+  const generateLowQualityUrl = (url: string) => {
+    if (!url) return "";
+    
+    try {
+      const urlObj = new URL(url);
+      // For Unsplash images, we can use their built-in transformation parameters
+      if (urlObj.hostname.includes('unsplash.com')) {
+        return `${url}&w=50&blur=10`;
+      }
+      return url; // Return original if we can't optimize
+    } catch (e) {
+      return url; // Return original on any error
+    }
+  };
+
   const handleButtonClick = async (type: string, url: string) => {
     setIsLoading(type);
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -75,6 +91,9 @@ const ProjectModal = ({
             className="w-full h-[300px] object-cover rounded-lg"
             fallback="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1074&auto=format&fit=crop"
             fallbackClassName="w-full h-[300px] bg-gray-100 rounded-lg"
+            lowQualityPlaceholder={generateLowQualityUrl(project.image)}
+            loading="eager" // Load this image immediately as it's the main content of an opened modal
+            decoding="async"
           />
         </div>
 

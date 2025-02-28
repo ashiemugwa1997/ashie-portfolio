@@ -3,7 +3,6 @@ import Navigation from "./Navigation";
 import AboutSection from "./AboutSection";
 import ProjectsSection from "./ProjectsSection";
 import ContactSection from "./ContactSection";
-import AITool from "./AITool";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 const Home = () => {
@@ -64,11 +63,6 @@ const Home = () => {
         {/* Contact Section */}
         <section id="contact">
           <ContactSection />
-        </section>
-
-        {/* AI Tool Section */}
-        <section id="ai-tool" className="py-10">
-          <AITool />
         </section>
       </main>
 

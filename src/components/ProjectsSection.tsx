@@ -24,7 +24,7 @@ interface ProjectsSectionProps {
 const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   projects = [
     {
-      id: 1,
+      id: 5,
       title: "UZ Research Week Android App",
       description:
         "Developed the University of Zimbabwe 2021 Research Week Android application with an integrated voting platform using Django Rest Framework.",
@@ -74,6 +74,19 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         "Built a sophisticated drone training management platform for ZESA Holdings that streamlines the entire training process. Features include student enrollment management, course scheduling, progress tracking, certification management, and detailed reporting. The system integrates with existing ZESA infrastructure and complies with local aviation regulations.",
       liveUrl: "https://example.com",
       githubUrl: "https://github.com/example",
+    },
+    {
+      id: 1,
+      title: "Premium Automation & Risk Analysis Platform",
+      description:
+        "Built an intelligent premium automation system that factors in inflation trends and market risks using AI-driven predictive analytics with Django backend.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop",
+      technologies: ["Django", "AI/ML", "Python", "TensorFlow", "PostgreSQL"],
+      details:
+        "Developed a sophisticated financial modeling platform that automates premium calculations for insurance products while dynamically adjusting for inflation trends and market volatility. The system incorporates machine learning algorithms to analyze historical data and predict future economic scenarios, allowing for robust risk assessment and pricing optimization. Key features include custom risk profiles, inflation-indexed premium adjustments, scenario modeling, and interactive dashboards for visualizing market trends and their potential impacts on premium structures. The platform achieved a 23% improvement in pricing accuracy and reduced manual adjustment time by 87%.",
+      liveUrl: "https://example.com/premium-automation",
+      githubUrl: "https://github.com/example/premium-risk-platform",
     },
   ],
 }) => {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { askGemini } from "../utils/geminiApi";
-import styles from "./AITool.module.css"; // Assuming you have styles
 
 const AITool: React.FC = () => {
   const [prompt, setPrompt] = useState("");
@@ -36,28 +35,33 @@ const AITool: React.FC = () => {
   };
 
   return (
-    <div className={styles.aiTool || ""}>
-      <h2>Interactive AI Tool</h2>
+    <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <h2 className="text-2xl font-bold mb-4 dark:text-white">Interactive AI Tool</h2>
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="mb-4">
         <input
           type="text"
           value={prompt}
           onChange={handlePromptChange}
           placeholder="Ask me anything..."
           disabled={loading}
+          className="w-full px-4 py-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
-        <button type="submit" disabled={loading}>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Ask AI
         </button>
       </form>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className={styles.error || ""}>{error}</p>}
+      {loading && <p className="text-gray-600 dark:text-gray-400">Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
       {!loading && response && (
-        <div className={styles.response || ""}>
-          <h3>Response:</h3>
-          <p>{response}</p>
+        <div className="mt-4 p-4 bg-gray-50 rounded-md dark:bg-gray-700">
+          <h3 className="text-lg font-semibold mb-2 dark:text-white">Response:</h3>
+          <p className="whitespace-pre-wrap dark:text-gray-200">{response}</p>
         </div>
       )}
     </div>

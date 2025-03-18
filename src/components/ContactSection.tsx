@@ -30,10 +30,10 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
             </CardHeader>
             <CardContent>
               <a 
-                href="mailto:your.email@example.com" 
+                href="mailto:your.ashleyzarter@gmail.com" 
                 className={`underline ${theme === 'dark' ? 'text-blue-300 hover:text-blue-200' : 'text-blue-600 hover:text-blue-800'}`}
               >
-                your.email@example.com
+                your.ashleyzarter@gmail.com
               </a>
             </CardContent>
           </Card>
@@ -48,7 +48,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
                 href="tel:+1234567890" 
                 className={`underline ${theme === 'dark' ? 'text-green-300 hover:text-green-200' : 'text-green-600 hover:text-green-800'}`}
               >
-                +1 (234) 567-7890
+                +263 (774) 243750
               </a>
             </CardContent>
           </Card>

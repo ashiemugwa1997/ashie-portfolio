@@ -45,7 +45,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ className = "" }) => {
             </CardHeader>
             <CardContent>
               <a 
-                href="tel:+1234567890" 
+                href="tel:+263774243750" 
                 className={`underline ${theme === 'dark' ? 'text-green-300 hover:text-green-200' : 'text-green-600 hover:text-green-800'}`}
               >
                 +263 (774) 243750
